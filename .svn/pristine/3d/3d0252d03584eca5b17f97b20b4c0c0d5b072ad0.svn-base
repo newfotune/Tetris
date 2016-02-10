@@ -1,0 +1,182 @@
+
+package view;
+
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.geom.Rectangle2D;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
+import java.util.Random;
+
+import javax.swing.JPanel;
+import javax.swing.Timer;
+
+import model.Board;
+import model.Board.BoardData;
+import model.MovableTetrisPiece;
+import model.Point;
+import model.TetrisPiece;
+
+public class BoardPanel extends JPanel implements Observer {
+
+    private Board myBoard;
+    private BoardData myBoardData;
+    private static final int TETRIS_SIZE = 20;
+
+    private Timer myTimer;
+    private Color myColor;
+
+    private Random myRand;
+
+    List<TetrisPiece> thePieces;
+    List<Color[]> myColorData;
+
+    private TetrisPiece myPiece;
+    private NextPiecePanel myNextPiecePanel;
+
+    private Point myCurrentPoint;
+
+    public BoardPanel() {
+        setBackground(Color.WHITE);
+        thePieces = new ArrayList<>();
+        myPiece = TetrisPiece.getRandomPiece();
+        myNextPiecePanel = new NextPiecePanel();
+
+        myBoard = new Board();
+        myBoard.addObserver(this);
+        myColorData = new ArrayList<>();
+
+        myColor = Color.BLACK;
+        myRand = new Random();
+
+        myBoard.clear();
+       
+        // thePieces.add(TetrisPiece.J);
+
+        myTimer = new Timer(500, null);
+        myTimer.start();
+
+    }
+
+    /**
+     * Paints the Blocks on the panel.
+     * 
+     * @param theGraphics this graphics o=drawing objects.
+     */
+    @Override
+    public void paintComponent(final Graphics theGraphics) {
+
+        super.paintComponent(theGraphics);
+        final Graphics2D g2d = (Graphics2D) theGraphics;
+
+        // for better graphics display
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                             RenderingHints.VALUE_ANTIALIAS_ON);
+        
+        for (int i = 0; i < myColorData.size(); i++) {
+            final Color[] colorRow = myColorData.get(i);
+            for (int j = 0; j < colorRow.length; j++) {
+                final Color newColor = colorRow[j];
+                g2d.setColor(newColor);
+
+                myCurrentPoint = new Point(j * TETRIS_SIZE, i * TETRIS_SIZE);
+
+                if (newColor != null) {
+                    g2d.fill(new Rectangle2D.Double(myCurrentPoint.x(), getHeight()
+                                                                        - myCurrentPoint.y()
+                                                                        - TETRIS_SIZE,
+                                                    TETRIS_SIZE, TETRIS_SIZE));
+                    // System.out.println(getHeight());
+                }
+            }
+        }
+        moveObjects();
+    }
+
+    @Override
+    public void update(final Observable theObservable, final Object theObject) {
+
+        if (theObservable instanceof Board) {
+            if (theObject instanceof BoardData) {
+
+                myBoardData = (BoardData) theObject;
+                myColorData = myBoardData.getBoardData();
+                // System.out.println((BoardData) theObject);
+                repaint();
+                // System.out.println(myColorData);
+            }
+            
+            if (theObject instanceof TetrisPiece) {
+                myPiece = (TetrisPiece) theObject;
+                //myNextPiecePanel.setNextPiece(myPiece);
+                //myNextMovablePiece = new MovableTetrisPiece(myPiece, myPoints[0]);
+            }
+        }
+    }
+
+    public TetrisPiece getNextPanelPiece() {
+        return myPiece;
+    }
+    
+    public Color getNextPieceColor() {
+        return myPiece.getColor();
+    }
+    
+    /**
+     * This moves the object with the timer.
+     */
+    public void moveObjects() {
+
+        myTimer.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(final ActionEvent theEvent) {
+                myBoard.step();
+                // myBoard.left();
+                //repaint();
+            }
+
+        });
+    }
+
+    /**
+     * Moves the piece to the right.
+     */
+    public void moveRight() {
+        myBoard.right();
+        repaint();
+    }
+
+    /**
+     * Moves the piece to the left.
+     */
+    public void moveLeft() {
+        myBoard.left();
+        repaint();
+    }
+
+    /**
+     * Moves the piece to the down.
+     */
+    public void moveDown() {
+        myBoard.down();
+        repaint();
+    }
+
+    /**
+     * rotates the piece CCW.
+     */
+    public void moveRotate() {
+        myBoard.rotateCCW();
+        repaint();
+    }
+}

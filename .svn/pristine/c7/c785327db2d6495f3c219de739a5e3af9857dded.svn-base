@@ -1,0 +1,156 @@
+/*
+ * Nwoke Fortune Chiemeziem Winter 2015.
+ */
+
+package view;
+
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+
+/**
+ * The main frame of the game.
+ * 
+ * @author n4tunec@uw.edu.
+ * @version winter 2015
+ *
+ */
+public class GameFrame {
+    /** The dimension of my frame. */
+    private static final Dimension MY_SIZE = new Dimension(500, 600);
+
+    /** The dimension of my information panel. */
+    private static final Dimension MY_INFOPANEL_SIZE = new Dimension(200, 550);
+
+    /** The main frame. */
+    private final JFrame myFrame;
+
+    /** The game panel. */
+    private final BoardPanel myPanel;
+
+    /** The informations panel. */
+    private final JPanel myInfoPanel;
+
+    /** The nextPiece Panel. */
+    private final NextPiecePanel myNextPiecePanel;
+
+    /**
+     * Constructor initializes all fields.
+     */
+    public GameFrame() {
+
+        // set up frame
+        myFrame = new JFrame("Tetris");
+        myFrame.setSize(MY_SIZE);
+        myFrame.setResizable(false);
+        myFrame.setLocationRelativeTo(null);
+        myFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        myNextPiecePanel = new NextPiecePanel();
+
+        // set up board panel
+        myPanel = new BoardPanel();
+        myPanel.addPropertyChangeListener(myNextPiecePanel);
+        myInfoPanel = new JPanel();
+
+        setUpControlsDialog();
+    }
+
+    /**
+     * This displays the game controls to the user before the game starts.
+     */
+    private void setUpControlsDialog() {
+        // setUp controls Dialog
+        JOptionPane.showMessageDialog(null,
+                                      "Key ----- function\n"
+                                       + "'A' key - move left\n'D' key - move right\n"
+                                       + "'S' key - move down \n'SPACE' key - drop\n"
+                                       + "'LEFT' key - rotateCCW \n'RIGHT' key - rotateCW",
+                                      "Game Controls", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    /**
+     * Start loading up components of the GUI.
+     */
+    public void start() {
+
+        myInfoPanel.setPreferredSize(MY_INFOPANEL_SIZE);
+        myInfoPanel.setBackground(Color.GRAY);
+
+        myInfoPanel.add(myNextPiecePanel);
+        
+        myFrame.addKeyListener(new KeyEventHandler());
+        myFrame.add(myInfoPanel, BorderLayout.EAST);
+        myFrame.add(myPanel);
+        myFrame.setVisible(true);
+    }
+
+    /**
+     * This handles the key events from the user.
+     * 
+     * @author n4tunec@uw.edu
+     * @version winter 2015.
+     *
+     */
+    public class KeyEventHandler extends KeyAdapter {
+
+        /**
+         * Default constructor.
+         */
+        protected KeyEventHandler() {
+            super();
+            // do nothing
+        }
+
+        /**
+         * takes care of the board movement.
+         * 
+         * @param theEvent the key event.
+         */
+        @Override
+        public void keyPressed(final KeyEvent theEvent) {
+            switch (theEvent.getKeyCode()) {
+                case KeyEvent.VK_D:
+                    myPanel.moveRight();
+
+                    break;
+
+                case KeyEvent.VK_A:
+
+                    myPanel.moveLeft();
+
+                    break;
+
+                case KeyEvent.VK_S:
+                    myPanel.moveDown();
+
+                    break;
+
+                case KeyEvent.VK_LEFT:
+                    myPanel.moveRotateLeft();
+
+                    break;
+
+                case KeyEvent.VK_RIGHT:
+                    myPanel.moveRotateRight();
+
+                    break;
+
+                case KeyEvent.VK_SPACE:
+                    myPanel.drop();
+
+                    break;
+
+                default:
+                    break;
+            }
+        }
+    }
+
+}

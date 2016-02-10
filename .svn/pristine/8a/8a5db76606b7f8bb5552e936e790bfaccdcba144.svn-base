@@ -1,0 +1,64 @@
+package view;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import model.Board;
+import model.MovableTetrisPiece;
+import model.Point;
+import model.Rotation;
+import model.TetrisPiece;
+
+public class Play {
+    
+    public static void main(final String[] theArgs) {
+        final Board myBoard = new Board();
+        
+        List<TetrisPiece> thePieces = new ArrayList<>();
+        thePieces.add(TetrisPiece.I);
+        thePieces.add(TetrisPiece.J); 
+        thePieces.add(TetrisPiece.L); 
+        thePieces.add(TetrisPiece.O);
+        thePieces.add(TetrisPiece.S);
+        thePieces.add(TetrisPiece.T);
+        thePieces.add(TetrisPiece.Z);
+        
+//        thePieces.add(new MovableTetrisPiece(TetrisPiece.I, new Point(1, 0), Rotation.HALF.clockwise()));
+//        thePieces.add(new MovableTetrisPiece(TetrisPiece.J, new Point(-1, 0), Rotation.HALF.clockwise())); 
+//        thePieces.add(new MovableTetrisPiece(TetrisPiece.L, new Point(1, 0), Rotation.HALF.clockwise())); 
+//        thePieces.add(new MovableTetrisPiece(TetrisPiece.O, new Point(1, 0), Rotation.HALF.clockwise()));
+//        thePieces.add(new MovableTetrisPiece(TetrisPiece.S, new Point(1, 0), Rotation.HALF.clockwise()));
+//        thePieces.add(new MovableTetrisPiece(TetrisPiece.T, new Point(1, 0), Rotation.HALF.clockwise()));
+//        thePieces.add(new MovableTetrisPiece(TetrisPiece.Z, new Point(1, 0), Rotation.HALF.clockwise()));
+        
+        myBoard.setPieceSequence(thePieces);
+        
+//        for (int i = 0; i < thePieces.size(); i++) {
+//            System.out.print(thePieces.get(i));
+//            thePieces.set(i,  thePieces.get(i).left());
+//            System.out.print(thePieces.get(i));
+//        }
+        
+        while (!myBoard.hasChanged()) {
+            System.out.println(myBoard.toString());
+            
+            myBoard.down();
+            //myBoard.left();
+            //myBoard.
+            
+            try {
+                Thread.sleep(1000);
+            }
+            catch (InterruptedException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+            
+            System.out.println(myBoard.toString());
+        }
+        
+        
+
+    }
+
+}

@@ -1,0 +1,134 @@
+package view;
+
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+
+import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JPanel;
+
+/**
+ * 
+ * @author Pwoke
+ *
+ */
+public class GameFrame {
+
+    private static final Dimension MY_SIZE = new Dimension(400, 550);
+    
+    public JFrame myFrame;
+    public BoardPanel myPanel;
+    public JPanel infoPanel;
+    public NextPiecePanel myNextPiecePanel;
+    
+    public GameFrame() {
+        
+        //set up frame
+        myFrame = new JFrame("Tetris");
+        myFrame.setSize(MY_SIZE);
+        myFrame.setLocationRelativeTo(null);
+        myFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        
+        //set up board panel
+        myPanel = new BoardPanel();
+        myNextPiecePanel = new NextPiecePanel();
+        
+        //set up infomation panel
+        infoPanel = new JPanel();
+        
+        //complete frame
+        myFrame.setJMenuBar(createMenuBar());
+        
+        myFrame.addKeyListener(new KeyEventHandler());
+        //myPanel.addKeyListener(new KeyEventHandler());
+        
+    }
+    
+    public void start() {
+       
+        
+        infoPanel.setPreferredSize(new Dimension(180, 550));
+        infoPanel.setBackground(Color.GRAY);
+        
+        //set up nextPiecePanel
+        myNextPiecePanel.setNextPiece(myPanel.getNextPanelPiece());
+        myNextPiecePanel.setNextPieceColor(myPanel.getNextPieceColor());
+        
+        infoPanel.add(myNextPiecePanel);
+        myFrame.add(infoPanel, BorderLayout.EAST);
+        myFrame.add(myPanel);
+        myFrame.setVisible(true);
+    }
+    
+    private JMenuBar createMenuBar() {
+        final JMenuBar menuBar = new JMenuBar();
+        
+        final JMenu fileMenu = new JMenu("File");
+        
+        menuBar.add(fileMenu);
+        return menuBar;
+    }
+    
+    
+    /**
+     * This handles the key events from the user.
+     * @author n4tunec@uw.edu
+     * @version winter 2015.
+     *
+     */
+    public class KeyEventHandler implements KeyListener {
+        
+        public KeyEventHandler() {
+            
+        }
+        @Override
+        public void keyPressed(final KeyEvent theEvent) {
+            
+            //System.out.println("Key Pressed");
+            
+            switch (theEvent.getKeyCode()) {
+                case KeyEvent.VK_RIGHT:
+                    myPanel.moveRight();
+                    
+                    break;
+                    
+                case KeyEvent.VK_LEFT:
+                   
+                    myPanel.moveLeft();
+                    //myPanel.repaint();
+                    break;
+                    
+                case KeyEvent.VK_DOWN:
+                    myPanel.moveDown();
+                    //myPanel.repaint();
+                    break;
+                    
+                case KeyEvent.VK_UP:
+                    myPanel.moveRotate();
+                    //myPanel.repaint();
+                    break;
+                    
+                default:
+                    break;
+            }
+        }
+        
+        @Override
+        public void keyReleased(KeyEvent arg0) {
+            // TODO Auto-generated method stub
+            
+        }
+
+        @Override
+        public void keyTyped(KeyEvent arg0) {
+            // TODO Auto-generated method stub
+            System.out.println("Key Pressed");
+        }
+    }
+
+}

@@ -1,0 +1,92 @@
+package view;
+
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
+import java.util.Observable;
+import java.util.Observer;
+
+import javax.swing.JPanel;
+
+import model.Board;
+import model.MovableTetrisPiece;
+import model.Point;
+import model.TetrisPiece;
+
+public class NextPiecePanel extends JPanel implements Observer{
+
+    private Point[] myPoints;
+    
+    private MovableTetrisPiece myNextMovablePiece;
+    
+    private TetrisPiece myPiece;
+    
+    private Color pieceColor;
+    
+    private static final int TETRIS_SIZE = 20;
+    
+    private Board myBoard;
+    
+    public NextPiecePanel() {
+        setPreferredSize(new Dimension(180, 200));
+        setBackground(Color.BLACK);
+       
+        myNextMovablePiece = new MovableTetrisPiece(null, new Point(0, 0));
+        //setUpComponents();
+    }
+   
+    /**
+     * Paints the Blocks on the panel.
+     * 
+     * @param theGraphics this graphics o=drawing objects.
+     */
+    @Override
+    public void paintComponent(final Graphics theGraphics) {
+
+        super.paintComponent(theGraphics);
+        final Graphics2D g2d = (Graphics2D) theGraphics;
+
+        // for better graphics display
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                             RenderingHints.VALUE_ANTIALIAS_ON);
+        
+        if (myPiece != null) {
+            myPoints = myPiece.getPoints();
+           
+            for (int i = 0; i < myPoints.length ; i++) {
+                
+                System.out.println("Drawn");
+                System.out.println(myPoints[i].x() + ", " + myPoints[i].y());
+                g2d.setColor(pieceColor);
+                g2d.fillRect((myPoints[i].x()*20) + getWidth()/3, (myPoints[i].y()*20)
+                             + getWidth()/3, TETRIS_SIZE, TETRIS_SIZE);
+            }
+            
+        }
+
+    }
+    
+    public void setNextPiece(final TetrisPiece theNextPiece) {
+        myPiece = theNextPiece;
+        repaint();
+    }
+    
+    public void setNextPieceColor(final Color nextColor) {
+        pieceColor = nextColor;
+        repaint();
+    }
+
+    @Override
+    public void update(final Observable theObservable, final Object theObject) {
+
+        if (theObject instanceof TetrisPiece) {
+            myPiece = (TetrisPiece) theObject;
+            //myNextPiecePanel.setNextPiece(myPiece);
+            //myNextMovablePiece = new MovableTetrisPiece(myPiece, myPoints[0]);
+        }
+        
+    }
+
+}

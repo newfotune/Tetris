@@ -1,0 +1,14 @@
+package view;
+
+public class DriverClass {
+
+    public DriverClass() {
+       
+    }
+    
+    public static final void main(final String[] theArgs) {
+        final GameFrame game = new GameFrame();
+        game.start();
+    }
+
+}

@@ -1,0 +1,144 @@
+
+package view;
+
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JPanel;
+
+/**
+ * The main frame of the game
+ * @author n4tunec@uw.edu.
+ * @version winter 2015
+ *
+ */
+public class GameFrame {
+
+    private static final Dimension MY_SIZE = new Dimension(500, 600);
+
+    public JFrame myFrame;
+    public BoardPanel myPanel;
+    public JPanel infoPanel;
+    public NextPiecePanel myNextPiecePanel;
+    
+    public ButtonCustomizationDialog myDialog;
+
+    public GameFrame() {
+
+        // set up frame
+        myFrame = new JFrame("Tetris");
+        myFrame.setSize(MY_SIZE);
+        myFrame.setResizable(false);
+        myFrame.setLocationRelativeTo(null);
+        myFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        
+        //myDialog = new ButtonCustomizationDialog();
+
+        myNextPiecePanel = new NextPiecePanel();
+
+        // set up board panel
+        myPanel = new BoardPanel();
+        myPanel.addPropertyChangeListener(myNextPiecePanel);
+        // myNextPiecePanel = new NextPiecePanel();
+        // set up infomation panel
+        infoPanel = new JPanel();
+
+        // complete frame
+        myFrame.setJMenuBar(createMenuBar());
+
+        myFrame.addKeyListener(new KeyEventHandler());
+
+    }
+
+    /**
+     * Start loading up components of the GUI.
+     */
+    public void start() {
+        
+        infoPanel.setPreferredSize(new Dimension(200, 550));
+        infoPanel.setBackground(Color.GRAY);
+
+        infoPanel.add(myNextPiecePanel);
+
+        myFrame.add(infoPanel, BorderLayout.EAST);
+        myFrame.add(myPanel);
+        myFrame.setVisible(true);
+        
+       // myDialog.setVisible(true);
+        //myDialog.setLocationRelativeTo(myFrame);
+        //myFrame.add(myDialog.getContentPane());
+    }
+
+    /**
+     * This creates the MenuBar for the GUI.
+     * @return the created menubar.
+     */
+    private JMenuBar createMenuBar() {
+        final JMenuBar menuBar = new JMenuBar();
+
+        final JMenu fileMenu = new JMenu("File");
+
+        menuBar.add(fileMenu);
+        return menuBar;
+    }
+
+    /**
+     * This handles the key events from the user.
+     * 
+     * @author n4tunec@uw.edu
+     * @version winter 2015.
+     *
+     */
+    public class KeyEventHandler extends KeyAdapter {
+
+        @Override
+        public void keyPressed(final KeyEvent theEvent) {
+
+            // System.out.println("Key Pressed");
+
+            switch (theEvent.getKeyCode()) {
+                case KeyEvent.VK_D:
+                    myPanel.moveRight();
+
+                    break;
+
+                case KeyEvent.VK_A:
+
+                    myPanel.moveLeft();
+
+                    break;
+
+                case KeyEvent.VK_S:
+                    myPanel.moveDown();
+
+                    break;
+
+                case KeyEvent.VK_LEFT:
+                    myPanel.moveRotateLeft();
+
+                    break;
+
+                case KeyEvent.VK_RIGHT:
+                    myPanel.moveRotateRight();
+
+                    break;
+
+                case KeyEvent.VK_SPACE:
+                    myPanel.drop();
+
+                    break;
+
+                default:
+                    break;
+            }
+        }
+    }
+
+}

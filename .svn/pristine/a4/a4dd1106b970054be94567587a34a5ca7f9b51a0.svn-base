@@ -1,0 +1,39 @@
+package view;
+
+import java.awt.GridLayout;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.util.HashMap;
+import java.util.Map;
+
+import javafx.scene.input.KeyCode;
+
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+
+public class ButtonCustomizationDialog extends JDialog {
+
+    private static final int DIALOG_SIZE = 400;
+    
+    //private CustomButton[] myButtons;
+    private String[] myButtonNames = {"rightButton", "leftButton", "downBotton", "dropButton", "rotateCCWButton", "rotateCWButton"};
+    private Map<JButton, String> myButtonsMap;
+    
+    private int[] keyEvents = {KeyEvent.VK_A, KeyEvent.VK_D, KeyEvent.VK_S,
+                               KeyEvent.VK_SPACE, KeyEvent.VK_LEFT, KeyEvent.VK_RIGHT};
+
+    
+    
+    /**
+     * The constructor for setting up the dialog. 
+     * Initializes all variables.
+     */
+    public ButtonCustomizationDialog() {
+        super();
+        setVisible(true);
+        setTitle("Customize Your Button");
+        setSize(DIALOG_SIZE, DIALOG_SIZE);
+        setLayout(new GridLayout(6, 2));
+    }
+}

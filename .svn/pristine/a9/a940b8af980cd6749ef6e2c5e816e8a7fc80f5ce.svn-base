@@ -1,0 +1,232 @@
+
+package view;
+
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.RenderingHints;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.geom.Rectangle2D;
+import java.awt.image.ImageObserver;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
+import java.util.Random;
+
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.Timer;
+
+import model.Board;
+import model.Board.BoardData;
+import model.Board.GameStatus;
+import model.MovableTetrisPiece;
+import model.Point;
+import model.TetrisPiece;
+
+public class BoardPanel extends JPanel implements Observer {
+
+    private Board myBoard;
+    private BoardData myBoardData;
+    private static final int TETRIS_SIZE = 20;
+
+    private Timer myTimer;
+    private Color myColor;
+
+    private Random myRand;
+
+    List<TetrisPiece> thePieces;
+    List<Color[]> myColorData;
+
+    private TetrisPiece myNextPiece;
+
+    private Point myCurrentPoint;
+    
+    private GameStatus myGameStatus;
+    
+    /**This image label contains the image.*/
+    private JLabel myImageLabel;
+
+    public BoardPanel() {
+        setBackground(Color.WHITE);
+        thePieces = new ArrayList<>();
+        myNextPiece = TetrisPiece.getRandomPiece();
+
+        myBoard = new Board(10, 30);
+        myBoard.addObserver(this);
+        myColorData = new ArrayList<>();
+        myImageLabel = new JLabel();
+
+        myColor = Color.BLACK;
+        myRand = new Random();
+
+        myBoard.clear();
+       
+        // thePieces.add(TetrisPiece.J);
+
+        myTimer = new Timer(2000, null);
+        myTimer.start();
+
+    }
+
+    /**
+     * Paints the Blocks on the panel.
+     * 
+     * @param theGraphics this graphics o=drawing objects.
+     */
+    @Override
+    public void paintComponent(final Graphics theGraphics) {
+
+        super.paintComponent(theGraphics);
+        final Graphics2D g2d = (Graphics2D) theGraphics;
+
+        // for better graphics display
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                             RenderingHints.VALUE_ANTIALIAS_ON);
+        
+        for (int i = 0; i < myColorData.size(); i++) {
+            final Color[] colorRow = myColorData.get(i);
+            for (int j = 0; j < colorRow.length; j++) {
+                final Color newColor = colorRow[j];
+                g2d.setColor(newColor);
+
+                myCurrentPoint = new Point(j * TETRIS_SIZE, i * TETRIS_SIZE);
+
+                if (newColor != null) {
+                    if (!myGameStatus.isGameOver()) {
+                        g2d.fill(new Rectangle2D.Double(myCurrentPoint.x(), getHeight()
+                                                        - myCurrentPoint.y()
+                                                        - TETRIS_SIZE,
+                                    TETRIS_SIZE, TETRIS_SIZE));
+                    } else {
+                        g2d.setFont(new Font("Comic Sans ms", Font.BOLD, 16));
+                        g2d.setColor(Color.WHITE);
+                        g2d.drawString("Game Over", getWidth() / 3, getHeight() / 3);
+                        setBackground(Color.BLACK);
+                    }
+                     
+                }
+            }
+        }
+       moveObjects();
+    }
+
+    @Override
+    public void update(final Observable theObservable, final Object theObject) {
+
+        if (theObservable instanceof Board) {
+            if (theObject instanceof BoardData) {
+
+                myBoardData = (BoardData) theObject;
+                myColorData = myBoardData.getBoardData();
+                // System.out.println((BoardData) theObject);
+                repaint();
+                // System.out.println(myColorData);
+            }
+            
+            else if (theObject instanceof TetrisPiece) {
+                myNextPiece = (TetrisPiece) theObject;
+                //myNextPiecePanel.setNextPiece(myPiece);
+                //myNextMovablePiece = new MovableTetrisPiece(myNextPiece, myNextPiece.getPoints()[0]);
+            }
+            
+            else if (theObject instanceof GameStatus) {
+                myGameStatus = (GameStatus) theObject;
+                
+            }
+        }
+    }
+
+    /**
+     * 
+     * @return
+     */
+    public TetrisPiece getNextPanelPiece() {
+        return myNextPiece;
+    }
+    
+    public Color getNextPieceColor() {
+        return myNextPiece.getColor();
+    }
+    
+    /**
+     * This moves the object with the timer.
+     */
+    public void moveObjects() {
+
+        myTimer.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(final ActionEvent theEvent) {
+                if (myGameStatus != null && !myGameStatus.isGameOver()) {
+                    System.out.println(myBoard);
+                     myBoard.step();
+                     
+                  // let listeners know that the board has changed!
+                     firePropertyChange("board", myBoard, myNextPiece);
+                     
+                }
+            }
+
+        });
+    }
+
+    /**
+     * Moves the piece to the right.
+     */
+    public void moveRight() {
+        myBoard.right();
+        repaint();
+    }
+
+    /**
+     * Moves the piece to the left.
+     */
+    public void moveLeft() {
+        myBoard.left();
+        repaint();
+    }
+
+    /**
+     * Moves the piece to the down.
+     */
+    public void moveDown() {
+        myBoard.down();
+        repaint();
+    }
+    
+    /**
+     * Moves the piece to the down.
+     */
+    public void drop() {
+        myBoard.drop();
+        repaint();
+    }
+
+    /**
+     * rotates the piece CCW.
+     */
+    public void moveRotateLeft() {
+        myBoard.rotateCCW();
+        repaint();
+    }
+    
+    /**
+     * rotates the piece CW.
+     */
+    public void moveRotateRight() {
+        myBoard.rotateCW();
+        repaint();
+    }
+}
